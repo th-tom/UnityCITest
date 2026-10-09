@@ -31,7 +31,7 @@ jobs:
       - name: Cache Library
         uses: actions/cache@v4
         with:
-          path: UnityProj/Library
+          path: Library
           key: Library-UnityProj-${{ hashFiles('UnityProj/ProjectSettings/ProjectVersion.txt') }}-${{ github.ref_name }}
           restore-keys: |
             Library-UnityProj-${{ hashFiles('UnityProj/ProjectSettings/ProjectVersion.txt') }}-
@@ -41,7 +41,6 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath: UnityProj
           testMode: all              # editmode + playmode 在同一容器里跑完
           artifactsPath: artifacts
           coverageEnabled: false     # 需要覆盖率报告时改 true(部分 Unity 版本会因插桩崩溃)
@@ -74,7 +73,7 @@ jobs:
       - name: Cache Library
         uses: actions/cache@v4
         with:
-          path: UnityProj/Library
+          path: Library
           key: Library-UnityProj-${{ hashFiles('UnityProj/ProjectSettings/ProjectVersion.txt') }}-${{ github.ref_name }}
           restore-keys: |
             Library-UnityProj-${{ hashFiles('UnityProj/ProjectSettings/ProjectVersion.txt') }}-
@@ -84,7 +83,6 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath: UnityProj
           targetPlatform: Android
           androidExportType: androidAppBundle   # apk → androidPackage / aab → androidAppBundle
           # 签名:到 Secrets 里配好后取消注释
