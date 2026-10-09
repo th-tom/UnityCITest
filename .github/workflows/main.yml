@@ -28,7 +28,6 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath: UnityProj
           targetPlatform: Android
           androidExportType: androidAppBundle        # apk / aab / androidStudioProject
           # androidKeystoreName / androidKeystoreBase64 / androidKeystorePass
