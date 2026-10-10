@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
 
+# test-runner 要把测试结果发成 Check Run,需要 checks: write
+permissions:
+  contents: read
+  checks: write
+
 # Personal 是单席位持有制:同一时刻只允许一场构建
 concurrency:
   group: unity-personal-seat
