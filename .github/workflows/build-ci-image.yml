@@ -1,0 +1,31 @@
+name: Build CI Docker image
+
+# 一次性/按需构建 CI 专用 Unity 镜像(JDK 17 + Gradle 8.11.1),推到 GHCR。
+# 镜像更新、或升级 Unity 小版本时手动触发一次即可。
+on:
+  workflow_dispatch:
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # GHCR 包名必须全小写
+      - name: Lowercase owner
+        run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .github/docker
+          push: true
+          tags: ghcr.io/${{ env.OWNER_LC }}/unity-android-ci:2022.3.62f3-agp8

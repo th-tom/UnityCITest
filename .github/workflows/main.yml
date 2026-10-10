@@ -83,11 +83,30 @@ jobs:
           restore-keys: |
             Library-UnityCITest-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}-
 
+      # 拉 GHCR 私有镜像需要登录;镜像包设为 public 后可删掉这步
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 仓库里的 org.gradle.java.home 是本地 Windows 路径,改成镜像里 JDK 17 的路径
+      - name: Point Gradle at JDK 17
+        run: |
+          grep -q '^org.gradle.java.home=' Assets/Plugins/Android/gradleTemplate.properties \
+            && sed -i 's#^org\.gradle\.java\.home=.*#org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64#' Assets/Plugins/Android/gradleTemplate.properties \
+            || echo 'org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64' >> Assets/Plugins/Android/gradleTemplate.properties
+
+      - name: Lowercase owner
+        run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
       - uses: game-ci/unity-builder@v6
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          customImage: ghcr.io/${{ env.OWNER_LC }}/unity-android-ci:2022.3.62f3-agp8
           targetPlatform: Android
           androidExportType: androidAppBundle   # apk → androidPackage / aab → androidAppBundle
           # 签名:到 Secrets 里配好后取消注释
