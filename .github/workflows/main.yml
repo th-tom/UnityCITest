@@ -107,6 +107,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           customImage: ghcr.io/${{ env.OWNER_LC }}/unity-android-ci:2022.3.62f3-agp8
+          allowDirtyBuild: true
           targetPlatform: Android
           androidExportType: androidAppBundle   # apk → androidPackage / aab → androidAppBundle
           # 签名:到 Secrets 里配好后取消注释
