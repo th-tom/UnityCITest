@@ -31,20 +31,19 @@ jobs:
       - name: Cache Library
         uses: actions/cache@v4
         with:
-          path: UnityProj/Library
-          key: Library-UnityProj-${{ hashFiles('UnityProj/ProjectSettings/ProjectVersion.txt') }}-${{ github.ref_name }}
+          path: Library
+          key: Library-UnityCITest-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}-${{ github.ref_name }}
           restore-keys: |
-            Library-UnityProj-${{ hashFiles('UnityProj/ProjectSettings/ProjectVersion.txt') }}-
+            Library-UnityCITest-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}-
 
       - uses: game-ci/unity-test-runner@v4
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath: UnityProj
           testMode: all              # editmode + playmode 在同一容器里跑完
           artifactsPath: artifacts
-          coverageEnabled: false     # 需要覆盖率报告时改 true(部分 Unity 版本会因插桩崩溃)
+          # 不要设 coverageEnabled: false —— action 会转成 CLI 不认的 --no-coverageEnabled(v0.1.72 已知 bug),需要关覆盖时等 CLI 修复
 
       - uses: actions/upload-artifact@v4
         if: always()                 # 测试失败也保留结果,便于排查
@@ -74,17 +73,16 @@ jobs:
       - name: Cache Library
         uses: actions/cache@v4
         with:
-          path: UnityProj/Library
-          key: Library-UnityProj-${{ hashFiles('UnityProj/ProjectSettings/ProjectVersion.txt') }}-${{ github.ref_name }}
+          path: Library
+          key: Library-UnityCITest-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}-${{ github.ref_name }}
           restore-keys: |
-            Library-UnityProj-${{ hashFiles('UnityProj/ProjectSettings/ProjectVersion.txt') }}-
+            Library-UnityCITest-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}-
 
       - uses: game-ci/unity-builder@v6
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath: UnityProj
           targetPlatform: Android
           androidExportType: androidAppBundle   # apk → androidPackage / aab → androidAppBundle
           # 签名:到 Secrets 里配好后取消注释
